@@ -14,6 +14,7 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -27,12 +28,30 @@ public abstract class ControlActions {
 	private static WebDriverWait wait;
 	
 	public static void launchBrowser() {
-		propOperations = new PropOperations(ConstantPath.DEV_ENV_FILEPATH);
-		System.setProperty(ConstantPath.CHROME_DRIVER_KEY, ConstantPath.CHROME_DRIVER_VALUE);
-		driver = new ChromeDriver();
-		driver.get(propOperations.getValue("url"));
-		driver.manage().window().maximize();
-		wait = new WebDriverWait(driver, ConstantPath.WAIT);
+		String browser = System.getProperty("browserName") == null? "chrome" : System.getProperty("browserName");
+		System.out.println("Browser selected is: "+System.getProperty("browserName"));
+		switch (browser) {
+		case "chrome":
+			propOperations = new PropOperations(ConstantPath.DEV_ENV_FILEPATH);
+			System.setProperty(ConstantPath.CHROME_DRIVER_KEY, ConstantPath.CHROME_DRIVER_VALUE);
+			driver = new ChromeDriver();
+			driver.get(propOperations.getValue("url"));
+			driver.manage().window().maximize();
+			wait = new WebDriverWait(driver, ConstantPath.WAIT);
+			break;
+
+		case "edge":
+			propOperations = new PropOperations(ConstantPath.DEV_ENV_FILEPATH);
+			System.setProperty(ConstantPath.EDGE_DRIVER_KEY, ConstantPath.EDGE_DRIVER_VALUE);
+			driver = new EdgeDriver();
+			driver.get(propOperations.getValue("url"));
+			driver.manage().window().maximize();
+			wait = new WebDriverWait(driver, ConstantPath.WAIT);
+			break;
+		default:
+			break;
+		}
+		
 	}
 	
 	protected void setText() {
